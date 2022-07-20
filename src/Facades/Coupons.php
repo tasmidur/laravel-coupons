@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool deleteCoupon(int $id)
  * @method static mixed getCoupon(int $id)
  * @method static mixed updateCoupon(array $payload, int $id)
+ * @method static mixed check(string $code)
  *
  * @see \Tasmidur\Coupon\CouponCode
  */

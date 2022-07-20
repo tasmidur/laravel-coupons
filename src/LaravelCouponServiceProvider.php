@@ -14,13 +14,8 @@ class LaravelCouponServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'coupon');
-        if ($this->app->runningInConsole()) {
 
-            $this->publishes([
-                __DIR__ . '/../resources/assets' => public_path('vendor/tasmidur-coupon/assets'
-                )], 'vue-components');
+        if ($this->app->runningInConsole()) {
 
             $this->publishes([
                 __DIR__ . '/../config/config.php' => config_path('coupon.php'),
@@ -29,7 +24,7 @@ class LaravelCouponServiceProvider extends ServiceProvider
             if (!class_exists('CreateCouponsTable')) {
                 $this->publishes([
                     __DIR__ . '/../database/migrations/create_coupons_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_coupons_table.php'),
-                ], 'migrations');
+                ], 'coupon-migrations');
             }
 
         }

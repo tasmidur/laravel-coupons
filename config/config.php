@@ -15,8 +15,13 @@ return [
     /*
      * Pivot table name for coupons and other table relation
      */
-    'coupon_applied_table' => 'coupon_applied',
+    'relation_table' => 'coupon_applied',
 
+    /*
+    * Pivot table model name for coupons and other table relation
+    */
+
+    'relation_model_class' => \App\Models\Course::class,
     /*
      * List of characters that will be used for Coupons code generation.
      */
@@ -44,5 +49,6 @@ return [
     'separator' => '-',
 
     'coupon_format'=>'*****-*****'
+
 
 ];

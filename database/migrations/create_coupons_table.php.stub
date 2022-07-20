@@ -12,7 +12,7 @@ class CreateCouponsTable extends Migration
     public function up()
     {
         $couponTable = config('coupon.table', 'coupons');
-        $couponApplied = config('coupon.coupon_applied_table', 'coupon_applied');
+        $couponApplied = config('coupon.relation_table', 'coupon_applied');
 
         Schema::create($couponTable, function (Blueprint $table) {
             $table->id();
@@ -20,7 +20,6 @@ class CreateCouponsTable extends Migration
             $table->string('coupon_type')->comment("1=>FIXED_PRICE, 2=>DISCOUNT_PRICE");
             $table->double('price')->nullable();
             $table->double('status')->default(1)->comment("1=>CREATED,2=>ASSIGN,3=>EXPIRED depend on expired at that will be managed logically");
-            $table->timestamp('expired_at')->nullable();
             $table->timestamps();
         });
 
@@ -30,7 +29,6 @@ class CreateCouponsTable extends Migration
             $table->id();
             $table->unsignedBigInteger($couponId);
             $table->morphs('model');
-            $table->double('net_price');
             $table->timestamp('applied_at')->nullable();
             $table->timestamps();
 

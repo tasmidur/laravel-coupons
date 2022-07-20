@@ -117,11 +117,8 @@ class CouponCode
     public function check(string $code)
     {
         $coupon = $this->couponModel->where('coupon_code', $code)->first();
-
         throw_if(empty($coupon), new Exception('The provided code ' . $code . ' is invalid.', Response::HTTP_NOT_FOUND));
-
         throw_if($coupon->isExpired(), new Exception('The provided code ' . $code . ' is already expired.', Response::HTTP_NOT_FOUND));
-
         return $coupon;
     }
 

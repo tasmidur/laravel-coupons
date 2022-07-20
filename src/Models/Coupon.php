@@ -4,6 +4,7 @@ namespace Tasmidur\Coupon\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Coupon extends Model
 {
@@ -32,10 +33,14 @@ class Coupon extends Model
     }
 
     /**
-     * The attributes that should be mutated to dates.
+     * Get where apply this coupon.
      *
-     * @var array
+     * @return BelongsToMany
      */
+    public function applies(): BelongsToMany
+    {
+        return $this->belongsToMany(config('coupon.relation_model_class'), config('coupon.relation_table'))->withPivot('applied_at');
+    }
 
     /**
      * Check if code is expired.
@@ -44,7 +49,9 @@ class Coupon extends Model
      */
     public function isExpired(): bool
     {
-        return $this->expired_at && Carbon::now()->gte($this->expires_at);
+        $expiredAt = Carbon::createFromFormat('Y-m-d H:i:s', $this->expired_at);
+        $now = Carbon::createFromFormat('Y-m-d H:i:s', Carbon::now());
+        return $expiredAt && $now->gte($expiredAt);
     }
 
     /**
