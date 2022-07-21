@@ -25,12 +25,6 @@ class CouponApplied extends Model
         parent::__construct($attributes);
         $this->table = config('coupon.coupon_applied_table', 'coupon_applied');
     }
-
-    public function model(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
     /**
      * The attributes that should be mutated to dates.
      *

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static mixed getCoupon(int $id)
  * @method static mixed updateCoupon(array $payload, int $id)
  * @method static mixed check(string $code)
+ * @method static mixed whereApplyCoupon(string $code)
  *
  * @see \Tasmidur\Coupon\CouponCode
  */

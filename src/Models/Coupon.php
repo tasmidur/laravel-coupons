@@ -39,7 +39,7 @@ class Coupon extends Model
      */
     public function applies(): BelongsToMany
     {
-        return $this->belongsToMany(config('coupon.relation_model_class'), config('coupon.relation_table'))->withPivot('applied_at');
+        return $this->belongsToMany(config('coupon.relation_model_class'), config('coupon.relation_table'),'coupon_id','apply_for_id')->withPivot('applied_at');
     }
 
     /**

@@ -55,13 +55,4 @@ trait CouponTrait
         return $this->belongsToMany(Coupon::class, config('coupon.relation_table', "coupon_applied"), 'coupon_id', "apply_for_id")->withPivot('applied_at');
     }
 
-    /**
-     * @return BelongsToMany
-     */
-    public function couponByCouponId(int $id): BelongsToMany
-    {
-        return $this->belongsToMany(Coupon::class, config('coupon.relation_table', "coupon_applied"), 'coupon_id', "apply_for_id")
-            ->wherePivot('coupon_id', $id)
-            ->withPivot('applied_at');
-    }
 }

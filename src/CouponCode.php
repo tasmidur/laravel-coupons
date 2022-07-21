@@ -47,13 +47,20 @@ class CouponCode
      */
     public function getCouponListWithPagination(int $length = 10, string $sortBy = "id", string $orderBy = "ASC"): mixed
     {
-        return $this->couponModel->query()->orderBy($sortBy, $orderBy)->paginate($length);
+        return $this->couponModel->query()->with('applies')->orderBy($sortBy, $orderBy)->paginate($length);
     }
 
     public function getCoupon(int $id): mixed
     {
         return $this->couponModel->find($id) ?? new stdClass();
     }
+
+
+    public function whereApplyCoupon(string $code): mixed
+    {
+        return $this->couponModel->where('coupon_code', $code)->with('applies')->get();
+    }
+
 
     public function updateCoupon(array $payload, int $id): mixed
     {
