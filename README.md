@@ -7,7 +7,7 @@ This package can associate coupons with your Eloquent models. This might come in
 You can install the package via composer:
 
 ```bash
-composer require beyondcode/laravel-coupons
+composer require tasmidur/coupon
 ```
 
 The package will automatically register itself.
