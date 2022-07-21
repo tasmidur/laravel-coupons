@@ -25,7 +25,7 @@ return [
     /*
      * List of characters that will be used for Coupons code generation.
      */
-    'characters' => '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+    'coupon_mix_characters' => '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
 
     /*
      * Coupons code prefix.

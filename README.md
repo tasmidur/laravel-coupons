@@ -1,22 +1,13 @@
 # Laravel Coupons
 
-This package can associate vouchers with your Eloquent models. This might come in handy, if you need to associate voucher codes with content that is stored in your Eloquent models.
-
-Here is an example of how you can create vouchers and redeem them:
-
-```php
-$videoCourse = VideoCourse::find(1);
-$voucher = $videoCourse->createVoucher();
-
-auth()->user()->redeemVoucher($voucher);
-```
+This package can associate coupons with your Eloquent models. This might come in handy, if you need to associate voucher codes with content that is stored in your Eloquent models.
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require beyondcode/laravel-vouchers
+composer require beyondcode/laravel-coupons
 ```
 
 The package will automatically register itself.
@@ -24,10 +15,10 @@ The package will automatically register itself.
 You can publish the migration with:
 
 ```bash
-php artisan vendor:publish --provider="BeyondCode\Vouchers\VouchersServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider="Tasmidur\Coupon\LaravelCouponServiceProvider" --tag="coupon-migrations"
 ```
 
-After the migration has been published you can create the vouchers table by running the migrations:
+After the migration has been published you can create the coupons table by running the migrations:
 
 ```bash
 php artisan migrate
@@ -36,7 +27,7 @@ php artisan migrate
 You can publish the config-file with:
 
 ```bash
-php artisan vendor:publish --provider=BeyondCode\Vouchers\VouchersServiceProvider --tag="config"
+php artisan vendor:publish --provider=Tasmidur\Coupon\LaravelCouponServiceProvider --tag="config"
 ```
 
 This is the contents of the published config file:
@@ -47,193 +38,98 @@ This is the contents of the published config file:
 return [
 
     /*
-     * Database table name that will be used in migration
+     * Table that will be used for migration
      */
-    'table' => 'vouchers',
+    'table' => 'coupons',
 
     /*
-     * Database pivot table name for vouchers and users relation
+     * Model to use
      */
-    'relation_table' => 'user_voucher',
+    'model' => \Tasmidur\Coupon\Models\Coupon::class,
 
     /*
-     * List of characters that will be used for voucher code generation.
+     * Pivot table name for coupons and other table relation
      */
-    'characters' => '23456789ABCDEFGHJKLMNPQRSTUVWXYZ',
+    'relation_table' => 'coupon_applied',
 
     /*
-     * Voucher code prefix.
+    * Pivot table model name for coupons and other table relation
+    */
+
+    'relation_model_class' => \App\Models\Course::class,
+    /*
+     * List of characters that will be used for Coupons code generation.
+     */
+    'characters' => '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+
+    /*
+     * Coupons code prefix.
      *
-     * Example: foo
-     * Generated Code: foo-AGXF-1NH8
+     * Example: course2022
+     * Generated Code: course2022-37JH-1PUY
      */
     'prefix' => null,
 
     /*
-     * Voucher code suffix.
+     * Coupons code suffix.
      *
-     * Example: foo
-     * Generated Code: AGXF-1NH8-foo
+     * Example: course2022
+     * Generated Code: 37JH-1PUY-course2022
      */
     'suffix' => null,
-
-    /*
-     * Code mask.
-     * All asterisks will be removed by random characters.
-     */
-    'mask' => '****-****',
 
     /*
      * Separator to be used between prefix, code and suffix.
      */
     'separator' => '-',
 
-    /*
-     * The user model that belongs to vouchers.
-     */
-    'user_model' => \App\User::class,
+    'coupon_format'=>'*****-*****'
+
+
 ];
 ```
-
 ## Usage
 
-The basic concept of this package is that you can create vouchers, that are associated with a specific model. For example, you could have an application that sells online video courses and a voucher would give a user access to one specific video course.
+The basic concept of this package is that you can create coupons, that are associated with a specific model. For example, you could have an application that sells online video courses and a voucher would give a user access to one specific video course.
 
-Add the `BeyondCode\Vouchers\Traits\HasVouchers` trait to all your Eloquent models, that you want to be associated with vouchers.
-
-In addition, add the `BeyondCode\Vouchers\Traits\CanRedeemVouchers` trait to your user model. This way users can easily redeem voucher codes and the package takes care of storing the voucher/user association in the database.
-
-## Creating Vouchers
+## Creating coupons
 
 ### Using the facade
 
-You can create one or multiple vouchers by using the `Vouchers` facade:
-
+You can create one or multiple coupons by using the `coupons` facade:
+* @method static array createCoupon(string $couponType, float $price, Carbon|null $expiredAt = null, int $totalAmount = 1)
+* @method static mixed getCouponList(string $sortBy = "id", string $orderBy = "ASC")
+* @method static mixed getCouponListWithPagination(int $length = 10, string $sortBy = "id", string $orderBy = "ASC")
+* @method static bool deleteCoupon(int $id)
+* @method static mixed getCoupon(int $id)
+* @method static mixed updateCoupon(array $payload, int $id)
+* @method static mixed check(string $code)
+* @method static mixed whereApplyCoupon(string $code)
 ```php
-$videoCourse = VideoCourse::find(1);
+//Use for Create
+$coupon = Coupons::createCoupon(string $couponType, float $price, Carbon|null $expiredAt = null, int $totalAmount = 1);
+//Use for get Coupon List
+$coupon = Coupons::getCouponList(string $sortBy = "id", string $orderBy = "ASC");
+$coupon = Coupons::getCouponListWithPagination(int $length = 10, string $sortBy = "id", string $orderBy = "ASC");
+$coupon = Coupons::deleteCoupon(int $id);
+$coupon = Coupons::getCoupon(int $id);
+//Use for update Coupon List
+$coupon = Coupons::updateCoupon(array $payload, int $id);
+//Use for validity check of Coupon
+$coupon = Coupons::check(string $code);
+//return list of applied coupon where it applied
+$coupon = Coupons::whereApplyCoupon(string $code);
 
-// Create 5 vouchers associated to the videoCourse model.
-$vouchers = Vouchers::create($videoCourse, 5);
 ```
 
-The return value is an array containing all generated `Voucher` models. 
-
-The Voucher model has a property `code` which contains the generated voucher code.
-
-### Using the Eloquent model
-
-In addition, you can also create vouchers by using the `createVouchers` method on the associated model:
-
+Add the `Tasmidur\Coupon\Traits\CouponTrait` trait to your model. This way you can easily apply coupon codes and the package takes care of storing the coupon association in the database.
 ```php
-$videoCourse = VideoCourse::find(1);
-
-// Returns an array of Vouchers
-$vouchers = $videoCourse->createVouchers(2);
-
-// Returns a single Voucher model instance
-$vouchers = $videoCourse->createVoucher();
+ $course = Course::findOrFail($courseId);
+ /** One Coupon Is for One Course */
+ $course->applyUniqueCoupon($couponCode);
+ /** all applied coupons that is associated with course */
+ $coupons = Course::eloquentQuery($sortBy, $orderBy, $searchValue)->with(['category', 'coupons'])->get();
 ```
-
-### Vouchers with additional data
-
-It might be useful to associate arbitrary data to your vouchers - maybe a personal message from the person that created the voucher, etc.
-When creating the vouchers, you can pass an array as the second argument, which you can then retrieve later on the Voucher instance.
-
-```php
-$videoCourse = VideoCourse::find(1);
-
-$vouchers = $videoCourse->createVouchers(2, [
-    'from' => 'Marcel',
-    'message' => 'This one is for you. I hope you like it'
-]);
-
-$voucher = $user->redeem('ABC-DEF');
-$from = $voucher->data->get('from');
-$message = $voucher->data->get('message');
-```
-
-### Vouchers with expiry dates
-
-You can also create vouchers that will only be available until a certain date. A user can not redeem this code afterwards.
-The `createVouchers` method accept a Carbon instance as a third parameter.
-
-```php
-$videoCourse = VideoCourse::find(1);
-
-$videoCourse->createVouchers(2, [], today()->addDays(7));
-```
-
-## Redeeming Vouchers
-
-The easiest way to let your users redeem voucher codes is by using the `redeemCode` method on your User model:
-
-```php
-$voucher = $user->redeemCode('ABCD-EFGH');
-```
-
-If the voucher is valid, the method will return the voucher model associated with this code.
-
-In case you want to redeem an existing Voucher model, you can use the `redeemVoucher` method on your User model:
-
-```php
-$user->redeemVoucher($voucher);
-``` 
-
-After a user successfully redeemed a voucher, this package will fire a `BeyondCode\Vouchers\Events\VoucherRedeemed` event. The event contains the user instance and the voucher instance.
-You should listen to this event in order to perform the business logic of your application, when a user redeems a voucher.
-
-### Accessing the vouchers associated model
-
-The `Voucher` model has a `model` relation, that will point to the associated Eloquent model:
-
-```php
-$voucher = $user->redeemCode('ABCD-EFGH');
-
-$videoCourse = $voucher->model;
-``` 
-
-## Handling Errors
-
-The `redeemCode` and `redeemVoucher` methods throw a couple of exceptions that you will want to catch and react to in your application:
-
-### Voucher invalid
-
-If a user tries to redeem an invalid code, the package will throw the following exception: `BeyondCode\Vouchers\Exceptions\VoucherIsInvalid`.
-
-### Voucher already redeemed
-
-All generated vouchers can only be redeemed once. If a user tries to redeem a voucher for a second time, or if another user already redeemed this voucher, the package will throw the following exception: `BeyondCode\Vouchers\Exceptions\VoucherAlreadyRedeemed::class`.
-
-### Voucher expired
-
-If a user tries to redeem an expired voucher code, the package will throw the following exception: `BeyondCode\Vouchers\Exceptions\VoucherExpired`.
-
-
-### Testing
-
-``` bash
-composer test
-```
-
-### Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-### Security
-
-If you discover any security related issues, please email marcel@beyondco.de instead of using the issue tracker.
-
-## Credits
-
-- [Marcel Pociot](https://github.com/mpociot)
-- [All Contributors](../../contributors)
-
-This package is heavily based on the Laravel Promocodes package from [Zura Gabievi](https://github.com/zgabievi). You can find the code on [GitHub](https://github.com/zgabievi/laravel-promocodes).
-
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.

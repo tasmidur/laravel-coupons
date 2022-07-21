@@ -38,7 +38,7 @@ class LaravelCouponServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/config.php', 'coupon');
 
         $this->app->singleton('coupons', function ($app) {
-            $generator = new CouponCodeGeneratorService(config('coupon.characters'), config('coupon.coupon_format'));
+            $generator = new CouponCodeGeneratorService(config('coupon.coupon_mix_characters'), config('coupon.coupon_format'));
             $generator->setPrefix(config('coupon.prefix'));
             $generator->setSuffix(config('coupon.suffix'));
             $generator->setSeparator(config('coupon.separator'));
