@@ -96,7 +96,7 @@ The basic concept of this package is that you can create coupons, that are assoc
 
 ### Using the facade
 
-You can create one or multiple coupons by using the `coupons` facade:
+You can create one or multiple coupons and access by using the `coupons` facade:
 * @method static array createCoupon(string $couponType, float $price, Carbon|null $expiredAt = null, int $totalAmount = 1)
 * @method static mixed getCouponList(string $sortBy = "id", string $orderBy = "ASC")
 * @method static mixed getCouponListWithPagination(int $length = 10, string $sortBy = "id", string $orderBy = "ASC")
